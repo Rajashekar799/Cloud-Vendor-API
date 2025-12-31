@@ -12,48 +12,88 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cloudvendor")
-public class CloudVendorController
-{
-    CloudVendorService cloudVendorService;
+public class CloudVendorController {
+
+    private final CloudVendorService cloudVendorService;
 
     public CloudVendorController(CloudVendorService cloudVendorService) {
         this.cloudVendorService = cloudVendorService;
     }
 
-    // Read Specific Cloud Vendor Details from DB
-    @GetMapping("/{vendorId}")
-    @ApiOperation(value ="Cloud vendor id", notes="Provide cloud vendor details",
-                    response = ResponseEntity.class)
-    public ResponseEntity<Object> getCloudVendorDetails(@PathVariable("vendorId") String vendorId)
-    {
-       return ResponseHandler.responseBuilder("Requested Vendor Details are given here",
-                HttpStatus.OK, cloudVendorService.getCloudVendor(vendorId));
+    // =========================
+    // DEFAULT ROUTE (INFO PAGE)
+    // =========================
+    @GetMapping
+    public String cloudVendorHome() {
+        return "<h1>Cloud Vendor API</h1>"
+                + "<p>✅ API is running successfully 🚀</p>"
+                + "<hr/>"
+                + "<h3>Available Endpoints:</h3>"
+                + "<ul>"
+                + "<li><b>GET</b> /cloudvendor/vendors → Get all cloud vendors</li>"
+                + "<li><b>GET</b> /cloudvendor/{vendorId} → Get cloud vendor by ID</li>"
+                + "<li><b>POST</b> /cloudvendor → Create a new cloud vendor</li>"
+                + "<li><b>PUT</b> /cloudvendor → Update an existing cloud vendor</li>"
+                + "<li><b>DELETE</b> /cloudvendor/{vendorId} → Delete cloud vendor</li>"
+                + "</ul>";
     }
 
-    // Read All Cloud Vendor Details from DB
-    @GetMapping("/")
-    public List<CloudVendor> getAllCloudVendorDetails()
-    {
+    // =========================
+    // GET ALL VENDORS
+    // =========================
+    @GetMapping("/vendors")
+    public List<CloudVendor> getAllCloudVendorDetails() {
         return cloudVendorService.getAllCloudVendors();
     }
 
-    @PostMapping("/")
-    public String createCloudVendorDetails(@RequestBody CloudVendor cloudVendor)
-    {
+    // =========================
+    // GET VENDOR BY ID
+    // =========================
+    @GetMapping("/{vendorId}")
+    @ApiOperation(
+            value = "Get Cloud Vendor by ID",
+            notes = "Provide cloud vendor details by vendor ID",
+            response = ResponseEntity.class
+    )
+    public ResponseEntity<Object> getCloudVendorDetails(
+            @PathVariable String vendorId) {
+
+        return ResponseHandler.responseBuilder(
+                "Requested Vendor Details are given here",
+                HttpStatus.OK,
+                cloudVendorService.getCloudVendor(vendorId)
+        );
+    }
+
+    // =========================
+    // CREATE VENDOR
+    // =========================
+    @PostMapping
+    public String createCloudVendorDetails(
+            @RequestBody CloudVendor cloudVendor) {
+
         cloudVendorService.createCloudVendor(cloudVendor);
         return "Cloud Vendor Created Successfully";
     }
 
-    @PutMapping("/")
-    public String updateCloudVendorDetails(@RequestBody CloudVendor cloudVendor)
-    {
+    // =========================
+    // UPDATE VENDOR
+    // =========================
+    @PutMapping
+    public String updateCloudVendorDetails(
+            @RequestBody CloudVendor cloudVendor) {
+
         cloudVendorService.updateCloudVendor(cloudVendor);
         return "Cloud Vendor Updated Successfully";
     }
 
+    // =========================
+    // DELETE VENDOR
+    // =========================
     @DeleteMapping("/{vendorId}")
-    public String deleteCloudVendorDetails(@PathVariable("vendorId") String vendorId)
-    {
+    public String deleteCloudVendorDetails(
+            @PathVariable String vendorId) {
+
         cloudVendorService.deleteCloudVendor(vendorId);
         return "Cloud Vendor Deleted Successfully";
     }
